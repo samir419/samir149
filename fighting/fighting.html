@@ -1,0 +1,86 @@
+<style>
+    button{
+        border: none;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<div id="touchArea" style=" display: flex;justify-content: center;align-items: center;">
+    <canvas style="width: 1080px;height: auto;border: solid black;"></canvas>
+</div>
+<button onclick="if(cpuu==false){cpuu = true}else{cpuu = false}">cpu</button>
+<button onclick="fullscreen()">fullscreen</button>
+<button onclick="players.push(test_chara1);players.push(test_chara2);main()">quickplay</button>
+<button onclick="main()">start</button>
+<button onclick="restart()">restart</button>
+<div>
+    <p id="player1_data"></p>
+    <p id="player2_data"></p>
+</div>
+<div>
+    <button onclick="players.push(test_chara1)"><img src="assets/sakura_pic.png" alt="" width="100px" height="100px">player 1 sakura</button>
+    <button onclick="players.push(test_chara3)"><img src="assets/cammy_pic.png" alt="" width="100px" height="100px">player 1 cammy</button>
+    <button onclick="players.push(test_chara2)"> <img src="assets/cammy_pic.png" alt="" width="100px" height="100px">player 2 cammy</button>
+    <button onclick="players.push(test_chara4)"><img src="assets/sakura_pic.png" alt="" width="100px" height="100px">player 2 sakura</button>
+</div>
+<script src="characters.js"></script>
+<script src="character2.js"></script>
+<script src="input.js"></script>
+<script src="keyboard.js"></script>
+<script src="cpu.js"></script>
+<script src="physics.js"></script>
+<script src="combat.js"></script>
+<script src="render.js"></script>
+<script>
+    let cpuu = false
+    const cvs = document.querySelector('canvas');
+    const ctx = cvs.getContext('2d');
+    //*0.85
+    cvs.width = 384
+    cvs.height = 224
+    const players=[];
+    const test_chara1 = new Test_character(52,1,1)
+    const test_chara2 = new Test_character2(228,1,-1)
+     const test_chara3 = new Test_character2(52,1,1)
+     const test_chara4 = new Test_character(228,1,-1)
+    
+    function fullscreen(){
+      cvs.requestFullscreen();
+    }
+    function restart(){
+        players[0].healthbar = 100;
+        players[0].x =52;
+         players[0].y =1;
+        
+        players[1].healthbar = 100;
+         players[1].x = 228;
+         players[1].y = 1;
+         main()
+    }
+    function main(){
+        cancelAnimationFrame(main);
+       if(players[0].healthbar > 0 && players[1].healthbar > 0){
+            input_timer()
+            players[0].update()
+            players[1].update()
+            physics( players[0],players[1]);physics( players[1],players[0])
+            combat( players[0], players[1]); combat( players[1], players[0])
+            render()
+            if(cpuu == true){
+                //cpu()
+                ai.update_ai(ai)
+            }
+            document.getElementById('player1_data').innerHTML = `player 1: x:${players[0].x} y:${players[0].y} dx/dy:${players[0].dx},${players[0].dy} state:${players[0].state} `;
+             document.getElementById('player2_data').innerHTML = `player 2: x:${players[1].x} y:${players[1].y}  dx/dy:${players[1].dx},${players[1].dy} state:${players[1].state}`;
+            requestAnimationFrame(main)
+       } else {
+            if(players[0].healthbar<= 0){
+                alert('player 2 wins')
+            }
+            if(players[1].healthbar<= 0){
+                alert('player 1 wins')
+            }
+       }
+    }
+
+</script>

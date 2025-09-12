@@ -1,0 +1,376 @@
+<html>
+    <head>
+        <style>
+           body{
+               background-color:grey
+           }
+            canvas{
+                margin-left:300px
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" onclick="if(player2.isalive){hitbox.shoot(player2,'up',player2.bullets)}"></canvas>
+        <script>
+            const cvs = document.querySelector('canvas');
+            const ctx = cvs.getContext('2d');
+             cvs.width = 900;
+            cvs.height = 700;
+            const bullets = [];
+            const music = new Audio ('beat 98 (ship game).mp3');
+            document.body.addEventListener('mousemove',function(){ music.play();})
+           
+           
+          
+          
+            class Player {
+                constructor(hp,x,y,width,height,dx,dy,speed,sprite,type){
+                    this.hp = hp;
+                    this.pos = {x,y}
+                    this.width = width;
+                    this.height = height;
+                    this.dx = dx;
+                    this.dy = dy;
+                    this.speed = speed;
+                    this.isalive=true;
+                    this.sprite = sprite;
+                    this.type = type;
+                    this.cooldown = 0
+                    this.bullets = [];
+                 
+                }
+                update_player() {
+                    if (this.isalive){
+                     
+                        ctx.drawImage(this.sprite,this.pos.x, this.pos.y, this.width, this.height);
+                        this.cooldown--;
+                    }
+                   if (this.hp<=0){
+                        this.isalive=false
+                    }
+                   
+                }
+                behavior(entity){
+
+                    if (shooting_frames == 1000||shooting_frames == 2000||shooting_frames == 3000||shooting_frames == 4000){
+                      if (this.pos.y >0){
+                        if (entity.pos.x > this.pos.x+200){
+                               hitbox.shoot(this,'downright',this.bullets);
+                        }
+                        else if (entity.pos.x < this.pos.x-200){
+                               hitbox.shoot(this,'downleft',this.bullets);
+                        }
+                        else{
+                                 hitbox.shoot(this,'down',this.bullets);
+                          }
+                      }
+                    }
+             
+                   if (this.type == 'trooper'){
+                        this.dy = 4;
+                   }
+                   else if (this.type == 'speedster'){
+                       this.dy = 5;
+                        this.dx = 3;
+                       if(movement_frames>5000 && movement_frames<9999){
+                           this.dx = -3  
+                       }
+                   } 
+                    else if (this.type == 'boss'){
+                       this.dy = 1;
+                        if (this.y ==300||this.y==500||this.y==700){
+                            hitbox.shoot(this,'down',this.bullets);
+                             hitbox.shoot(this,'downleft',this.bullets);
+                             hitbox.shoot(this,'downright',this.bullets);
+                        }
+                   };
+                    
+                    this.pos.y += this.dy
+                    this.pos.x += this.dx
+                    if (shooting_frames == 4000){
+                        shooting_frames = 0;
+                    }
+                    if (movement_frames == 10000){
+                        movement_frames = 0
+                    }
+                    if(this.pos.y >= 900){
+                        this.pos.y = -500;
+                    }
+                    shooting_frames++;
+                    movement_frames++;
+                }
+
+            };
+
+             class CharSprites {
+                constructor() {
+                    this.enemy = new Image()
+                    this.enemy.src = 'alien.png';
+                    this.player = new Image();
+                    this.player.src = 'ship.png';
+                     this.player2 = new Image();
+                    this.player2.src = 'ship copy.png';
+                }
+            }
+            const cs = new CharSprites();
+
+            class Hitbox {
+                constructor(){
+                 
+                }
+               
+                shoot(entity,direction,bullets){
+                   //if (entity.cooldown<=0){
+                         if (entity.bullets.length <3){
+                           if (direction == 'up'){
+                                entity.bullets.push({x: entity.pos.x + entity.width / 2 - 2.5, y: entity.pos.y-25, width: 5, height: 10,dx:0,dy:-7})
+                           }
+                            if (direction == 'down'){
+                                 entity.bullets.push({x: entity.pos.x + entity.width / 2 - 2.5, y: entity.pos.y+75, width: 5, height: 10,dx:0,dy:7})
+                            }
+                            if (direction == 'downleft'){
+                                 entity.bullets.push({x: entity.pos.x + entity.width / 2 - 2.5, y: entity.pos.y+75, width: 5, height: 10,dx:-5,dy:7})
+                            }
+                            if (direction == 'downright'){
+                                 entity.bullets.push({x: entity.pos.x + entity.width / 2 - 2.5, y: entity.pos.y+75, width: 5, height: 10,dx:5,dy:7})
+                            }
+                         };
+                       //entity.cooldown = 50;
+                   //}
+                }
+                drawBullets(entity) {
+                    ctx.fillStyle = 'red';
+                    entity.bullets.forEach((bullet, index) => {
+                        ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height,bullet.dx,bullet.dy);
+                        bullet.y += bullet.dy;
+                        bullet.x += bullet.dx;
+                
+                        if (bullet.y < 0||bullet.y > cvs.height) {
+                            entity.bullets.splice(index, 1);
+                        }
+                    });
+                }
+               
+
+                collision(entity,entity2){
+                    entity.bullets.forEach((bullet, bIndex) => {
+                        if (bullet.x < entity2.pos.x + entity2.width &&
+                            bullet.x + bullet.width > entity2.pos.x &&
+                            bullet.y < entity2.pos.y + entity2.height &&
+                            bullet.height + bullet.y > entity2.pos.y&&
+                           entity2.isalive) {
+                            entity.bullets.splice(bIndex, 1);
+                            entity2.hp--;
+                
+                        }
+                    });
+                }
+              
+            }
+
+            const hitbox = new Hitbox();
+
+            const player = new Player(3,cvs.width/2,cvs.height/2,50,50,0,0,5,cs.player);
+             const player2 = new Player(3,cvs.width/2+100,cvs.height/2,50,50,0,0,5,cs.player2);
+         
+            const enemies = [new Player(0,100,-900,50,50,0,0,5,cs.enemy,'trooper'),
+                           new Player(1,200,-650,50,50,0,0,5,cs.enemy,'trooper'),
+                            new Player(1,0,-700,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,800,-1000,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,0,-550,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,600,-900,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,200,-800,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,700,-1200,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,300,-1100,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(10,200,-2000,100,100,0,0,5,cs.enemy,'boss'),
+                             new Player(1,800,-650,50,50,0,0,5,cs.enemy,'trooper'),
+                            new Player(1,950,-1500,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,900,-1800,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,150,-1550,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,800,-1650,50,50,0,0,5,cs.enemy,'trooper'),
+                            new Player(1,950,-1500,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,900,-1700,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,50,-850,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,200,-650,50,50,0,0,5,cs.enemy,'trooper'),
+                            new Player(1,0,-700,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,800,-2000,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,50,-2550,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,600,-1900,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,200,-1800,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,700,-2200,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,300,-2100,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(10,200,-3000,500,500,0,0,5,cs.enemy,'boss'),
+                             new Player(1,800,-1650,50,50,0,0,5,cs.enemy,'trooper'),
+                            new Player(1,950,-2500,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,900,-2800,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,100,-1850,50,50,0,0,5,cs.enemy,'speedster'),
+                             new Player(1,800,-2650,50,50,0,0,5,cs.enemy,'trooper'),
+                            new Player(1,950,-2500,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,900,-2700,50,50,0,0,5,cs.enemy,'trooper'),
+                             new Player(1,200,-2850,50,50,0,0,5,cs.enemy,'speedster')];
+
+           
+
+            document.addEventListener('keydown', move);
+            document.addEventListener('keyup', stop);
+
+             function move(e) {
+                 switch(e.key){
+                     case 'w':
+                         if (player.pos.y>0){
+                             player.dy = -player.speed;
+                         }
+                         else{ player.dy = 0;};
+                         break;
+                     case 's':
+                         if (player.pos.y<cvs.height){
+                              player.dy = player.speed;
+                         }
+                         else{
+                             player.dy = 0;
+                         };
+                         break;
+                     case 'a':
+                         if (player.pos.x>0){
+                              player.dx = -player.speed;
+                         };
+                         break;
+                     case 'd':
+                         if (player.pos.x<cvs.width){
+                               player.dx = player.speed;
+                         };
+                         break;
+                     case ' ':
+                            if(player.isalive){
+                                  hitbox.shoot(player,'up',player.bullets)
+                            }
+                         break;
+                        //player2
+                       case 'ArrowUp':
+                         if (player2.pos.y>0){
+                             player2.dy = -player2.speed;
+                         }
+                         else{ player2.dy = 0;};
+                         break;
+                     case 'ArrowDown':
+                         if (player2.pos.y<cvs.height){
+                              player2.dy = player2.speed;
+                         }
+                         else{
+                             player2.dy = 0;
+                         };
+                         break;
+                     case 'ArrowLeft':
+                         if (player2.pos.x>0){
+                              player2.dx = -player2.speed;
+                         };
+                         break;
+                     case 'ArrowRight':
+                         if (player2.pos.x<cvs.width){
+                               player2.dx = player2.speed;
+                         };
+                         break;
+                     case 'm':
+                            if(player2.isalive){
+                                  hitbox.shoot(player2,'up',player2.bullets)
+                            }
+                         break;
+                          
+                 }
+                
+               
+            }
+          
+
+            function stop(e) {
+                  switch(e.key){
+                     case 'w': player.dy = 0;  break;
+                       
+                     case 's':  player.dy =0; break;
+                        
+                     case 'a':player.dx = 0; break;
+                        
+                        
+                     case 'd':  player.dx =0; break;
+
+                        case 'ArrowUp': player2.dy = 0;  break;
+                       
+                     case 'ArrowDown':  player2.dy =0; break;
+                        
+                     case 'ArrowLeft':player2.dx = 0; break;
+                        
+                        
+                     case 'ArrowRight':  player2.dx =0; break;
+                        
+                        
+                          
+                 }
+               
+            }
+            let shooting_frames = 0
+            let movement_frames = 0
+            
+            
+            
+
+             function update(){
+                
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0,0,cvs.width,cvs.height);
+                hitbox.drawBullets(player);
+                hitbox.drawBullets(player2);
+                player.update_player();
+                 player2.update_player();
+                for(let i =0; i < enemies.length; i++){
+                    enemies[i].update_player();
+                    if (enemies[i].isalive){
+                        enemies[i].behavior(player);
+                     
+                    };
+                     hitbox.drawBullets(enemies[i]);
+                    hitbox.collision(enemies[i],player);
+                     hitbox.collision(enemies[i],player2);
+                    hitbox.collision(player,enemies[i]); 
+                      hitbox.collision(player2,enemies[i]); 
+                } 
+               
+                player.pos.x += player.dx;
+                player.pos.y += player.dy;
+                if (player.pos.x < 0) {
+                    player.pos.x = 0;
+                }
+                if (player.pos.x + player.width > cvs.width) {
+                    player.pos.x = cvs.width - player.width;
+                }
+                  if (player.pos.y < 0) {
+                    player.pos.y = 0;
+                }
+                if (player.pos.y + player.height > cvs.height) {
+                    player.pos.y = cvs.height-player.height;
+                }
+
+                 //player2
+                player2.pos.x += player2.dx;
+                player2.pos.y += player2.dy;
+                if (player2.pos.x < 0) {
+                    player2.pos.x = 0;
+                }
+                if (player2.pos.x + player2.width > cvs.width) {
+                    player2.pos.x = cvs.width - player2.width;
+                }
+                  if (player2.pos.y < 0) {
+                    player2.pos.y = 0;
+                }
+                if (player2.pos.y + player2.height > cvs.height) {
+                    player2.pos.y = cvs.height-player2.height;
+                }
+                
+                requestAnimationFrame(update);
+                
+            }
+
+            update();
+          
+        </script>
+    </body>
