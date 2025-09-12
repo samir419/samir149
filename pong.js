@@ -123,6 +123,17 @@ document.addEventListener("keyup", event => {
     if (event.key === "s")player.dy=0;
 });
 
+canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    player.y = touch.clientY - player.height;
+})
+canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    player.y = touch.clientY - player.height;
+})
+
 function game() {
     update();
     render();

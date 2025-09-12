@@ -5,3 +5,4 @@ header{display: flex; flex-direction: row; align-items: center;justify-content: 
 .container>div{width: 300px;}
 .content{display: flex; flex-direction: column; align-items: center; justify-content: center}
 img{max-width: 300px;}
+a{color: red; text-decoration: none;}
