@@ -1,0 +1,90 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        #moveset-editor{
+            display: none;
+            background-color: rgb(57, 114, 87);
+            min-height: 10vh;
+        }
+    </style>
+</head>
+<body>
+   <div class="container-vertical">
+        <div class="quarter-grid b">
+             <div class="b">
+                <h2>place holder</h2>
+                <button onclick="saveData()">💾 Save</button>
+                <label for="">load</label>
+                <input type="file" id="fileInput" accept=".json" onchange="loadData(event)" />
+                <h3>stats</h3>
+                <div id="my-stats"></div>
+                 <h3>items</h3>
+                <div class="container-vertical" id="items"></div>
+                <h3>achievements</h3>
+                <div id="my-achievements"></div>
+            </div>
+             <div class="container-vertical b" >
+                <h2>move sets</h2>
+                <button onclick="document.getElementById('moveset-editor').style.display='flex'">open editor</button>
+                <div id="moveset-editor" class="quarter-grid b">
+                    
+                    <div>
+                        <button onclick="document.getElementById('moveset-editor').style.display='none'">close</button>
+                        <input type="text" id="moveinput">
+                        <button onclick="addmove(document.getElementById('moveinput').value);document.getElementById('moveinput').value='';">add</button>
+                        <div id="move-display"></div>
+                    </div>
+                    <div id="sugg"></div>
+                    <div><button onclick="createset()">create new set</button></div>
+                    <div>
+                        <h2>available moves</h2>
+                        <div id="av-moves" class="container-horizontal"></div>
+                    </div>
+
+                </div>
+                <div class="container-horizontal" id="moveset"></div>
+
+            </div>
+            <div class="container b">
+                <div id="chats" style="width: 95%; display: grid; grid-template-columns:1fr 2fr;overflow: auto;" class="b"></div>
+            </div>
+            <div class="half-grid b">
+                <div id="player-data" class="b">
+                    <h2>inventory</h2>
+                </div>
+                <div class="b">
+                    <button onclick="sleep()">sleep</button>
+                    <div id="time"></div>
+                    <a href="map.html">back to map</a>
+                </div>
+            </div>
+            
+        </div>
+        <div class="quarter-grid b">
+            <div class="b">
+                <h3>edit profile</h3>
+                <input id="name-input" type="text" placeholder="name">
+                <div>
+                     <img id="preview" src="" alt="" width="50" height="50">
+                </div>
+                <div class="container-horizontal">
+                    <img src="game assets/opponents/aisha.jpg" alt="" onclick="set_player_pfp(this.src)" width="100" height="100">
+                    <img src="game assets/opponents/quetzie.jpg" alt="" onclick="set_player_pfp(this.src)" width="100" height="100">
+                    <img src="game assets/opponents/blake.jpg" alt="" onclick="set_player_pfp(this.src)" width="100" height="100">
+                     <img src="pfp.png" alt="" onclick="set_player_pfp(this.src)" width="100" height="100">
+                </div>
+               
+                <button onclick="set_name(document.getElementById('name-input').value)">submit</button>
+            </div>
+        </div>
+   </div>
+   <script src="index.js"></script>
+   <script src="dorm_room.js">
+    
+   </script>
+</body>
+</html>
