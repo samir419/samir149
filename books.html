@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        div{
+           /* border: solid red;*/
+        }
+    </style>
+</head>
+<body>
+     <header class="header row">
+        <div>
+                <h1>SAMIR149's INTERNET CORNER</h1>
+        </div>
+        <div>
+            <img src="assets/lilith90.gif">
+        </div>
+    </header>
+    <div class="nav">
+        <div><a href="index.html">HOME</a></div>
+        <div><a href="https://www.deviantart.com/guccistylus">ART</a></div>
+        <div><a href="games.html">GAMES</a></div>
+        <div><a href="https://www.youtube.com/@Samir_the_composer">MUSIC</a></div>
+        <div><a href="books.html">BOOKS</a></div>
+    </div>
+    <div class="frame column">
+        <h1>books</h1>
+        <div class="grid-wrap" id="content">
+        </div>
+    </div>
+    <script>
+        let books = [
+            {
+                title:'my book',
+                format:'web',
+                source:'story.html',
+                summary:'short story implementation',
+                genres:'short story, slice of life',
+                book_cover:'assets/Untitled137_20250910071811.png'
+            }
+        ]
+        for(let i=0;i<books.length;i++){
+            document.getElementById('content').innerHTML+=`<div class="grid2 ratio1by3">
+                <div class="frame">
+                    <img src=${books[i].book_cover} alt="">
+                </div>
+                <div>
+                    <h3>${books[i].title}</h3>
+                    <p>${books[i].format}</p>
+                     <p>${books[i].genres}</p>
+                    <p>${books[i].summary}</p>
+                    <a href=${books[i].source}>read</a>
+                </div>
+            </div>`;
+        }
+    </script>
+</body>
+</html>
