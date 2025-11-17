@@ -13,11 +13,52 @@
             width: 100px;
             height: 100px;
         }
+        .ui{
+            width: 100%;
+            max-width: 920;
+             height: 100%; background-color: rgb(0,0,255,0.5);
+            position: absolute; z-index: 100;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .ui-fixed{
+            width: 100%;
+            max-width: 920;
+             height: 100%;
+            position: absolute; z-index: 90;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
     <div style="display: flex;align-items: center;justify-content: center;width: 100%;flex-direction: column;">
-        click screen to start
+        <div class="ui" id="select-mode">
+           <div>
+                <h2>select mode</h2>
+                <button onclick="mode='single';display_ui('select-player');select.play()">single player</button>
+                <button onclick="mode='multi';display_ui('select-player');select.play()">multiplayer</button>
+                <button onclick="mode='watch';display_ui('select-player');select.play()">watch</button>
+           </div>
+        </div>
+        <div class="ui" id="select-player">
+            <h2 id="select-player-msg">player 1 select</h2>
+        </div>
+        <div class="ui" id="win-screen">
+            <div>
+                <h2 id="win-screen-msg"></h2>
+                <button onclick="game = new Game();game.start()">restart</button>
+            </div>
+        </div>
+         <div class="ui-fixed" id="debug">
+            <div>
+                <p id="process"></p>
+                <p id="p1data"></p>
+                <p id="p2data"></p>
+            </div>
+        </div>
          <canvas id="game-canvas" style="width: 100%;max-width: 920;border: solid;" onclick="if(game.state=='wait')game.start()"></canvas>
     </div>
    
@@ -37,28 +78,33 @@
     </div>
    
     <button onclick="game.state='running'">restart</button>
+    <button onclick="music.pause()">pause</button>
     <script src="player.js"></script>
     <script src="special moves.js"></script>
+    <script src="chars.js"></script>
+    <script src="ui.js"></script>
     <script>
+        let mode
+        let game
+        let main_char
+        let main_char2 
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 720
         canvas.height = 480
         score_point = new Audio()
         score_point.src = 'game-start-317318.mp3'
+        ball_bounce = new Audio()
+        ball_bounce.src = 'soccer-kick-6235.mp3'
         music = new Audio()
         music.loop=true
         music.src = 'game-music-loop-6-144641.mp3'
         class Game{
             constructor(){
                 this.players =[
-                    new Player(1),
-                    new Player(2)
+                    new Player(1,main_char),
+                    new Player(2,main_char2)
                 ]
-                this.players[0].special_moves = [projectile,direct_shot]
-                this.players[0].ultimatemove=super_shot
-                this.players[1].special_moves = [feint,reflector,projectile,teleport,direct_shot,shadowclones]
-                this.players[1].ultimatemove=super_shot
                 this.ball = new Ball()
                 this.state = 'wait'
                 this.input_buffer=0
@@ -73,6 +119,7 @@
                 
             }
             start(){
+                display_ui('none');
                 this.reset()
                 this.ball.dx=5
                 this.ball.dy=5
@@ -81,11 +128,11 @@
                 this.update()
             }
             reset(){
-                this.players[0].x = 0
+                this.players[0].x = 15
                 this.players[0].y = 240
                 this.players[0].meter = 0
                 this.players[0].health = 100
-                this.players[1].x = 670
+                this.players[1].x = 655
                 this.players[1].y = 240
                 this.players[1].meter = 0
                 this.players[1].health = 100
@@ -115,9 +162,11 @@
                 }
                 if(key=='p'){
                     if(this.state=='pause'){
+                        display_ui('none')
                         this.state = 'running'
                     }else{
                         this.state = 'pause'
+                        display_ui('win-screen')
                     }
                 }
                 if(key=='f'){
@@ -135,15 +184,15 @@
                     this.players[0].dash(1)
                 }
                 if(key=='j'){
-                    let move = this.players[0].special_moves[0] 
+                    let move = generate(this.players[0].special_moves[0])  
                     move.onstart(this.players[0],this.players[1],this)
                 }
                 if(key=='k'){
-                    let move = this.players[0].special_moves[1] 
+                    let move = generate(this.players[0].special_moves[1]) 
                     move.onstart(this.players[0],this.players[1],this)
                 }
                  if(key=='l'){
-                    let move = this.players[0].ultimatemove
+                    let move = generate(this.players[0].ultimatemove)
                     move.onstart(this.players[0],this.players[1],this)
                 }
                 this.input_buffer=10
@@ -155,7 +204,13 @@
                 
                 this.processes.forEach(p=>{
                     ctx.fillStyle=p.color
-                    ctx.fillRect(p.x,p.y,p.w,p.h)
+                    if(p.image){
+                        ctx.drawImage(p.image,p.x,p.y)
+                    }else{
+                        ctx.fillRect(p.x,p.y,p.w,p.h)
+                    }
+                   
+                    
                 })
                 ctx.fillStyle='white'
                 ctx.fillRect(this.ball.x,this.ball.y,this.ball.width,this.ball.height)
@@ -164,15 +219,30 @@
                         ctx.fillStyle='orange'
                         ctx.fillRect(player.x-25,player.y-25,player.width+50,player.height+50)
                     }
-                    if(player.state=='parry'){
-                         ctx.fillStyle='green'
-                        ctx.fillRect(player.x-25,player.y-25,player.width+50,player.height+50)
-                       
-                    }
-                   
                     ctx.strokeRect(player.x,player.y,player.width,player.height)
+                    let img = player.get_image();
 
-                    ctx.drawImage(player.get_image(),player.x-35,player.y-35)
+                    // Save context before applying transforms
+                    ctx.save();
+
+                    // Move origin to image center so flipping is around the character,
+                    // not around the canvas corner.
+                    let drawX = player.x - (img.w / 4);
+                    let drawY = player.y - (img.h / 4);
+                    let centerX = drawX + img.w / 2;
+                    let centerY = drawY + img.h / 2;
+                    ctx.translate(centerX, centerY);
+                    // Apply flipping
+                    if(player.num==2){
+                        ctx.scale(-1, 1);
+                    }else{
+                         ctx.scale(1, 1);
+                    }
+                    // Draw image offset back because we've moved origin to center
+                    ctx.drawImage(img.image, -img.w / 2, -img.h / 2);
+                    // Restore normal drawing state
+                    ctx.restore();
+
                 })
                 ctx.fillStyle='yellow'
                 
@@ -185,13 +255,22 @@
                 ctx.fillRect(720-100,0,this.players[1].health,20)
             }
             update(){
+                //document.getElementById('process').textContent=JSON.stringify(this.processes)
+                //document.getElementById('p1data').textContent=JSON.stringify(this.players[0])
+                //document.getElementById('p2data').textContent=JSON.stringify(this.players[1])
                 if(this.state=='running'){
                     this.players[0].update()
                     
                     this.players[1].update()
                     this.ball.update()
-                    this.players[1].cpu(this.players[1],this.players[0],this)
-
+                    if(mode=='single'){
+                        this.players[1].cpu(this.players[1],this.players[0],this)
+                    }
+                    if(mode=='watch'){
+                        this.players[1].cpu(this.players[1],this.players[0],this)
+                        this.players[0].cpu(this.players[0],this.players[1],this)
+                    }
+                
                     this.processes.forEach((process,index)=>{
                         process.update(this)
                         if(process.state=='dead'){
@@ -201,18 +280,14 @@
                         
                     this.players.forEach((player,index)=>{
                         if(this.get_collision(this.ball,player)){
-                            if(player.isultimate==true){
-                                let ultimove = player.ultimatemove
-                                if(player==this.players[0]){
-                                     ultimove.onstart(this.players[0],this.players[1],this)
-                                }else{
-                                    ultimove.onstart(this.players[1],this.players[0],this)
+                            if(this.ball.state=='normal'){
+                                ball_bounce.play()
+                                this.ball.dx*=-1
+                                if(this.ball.lasthit!=player){
+                                     this.ball.lasthit=player
+                                    player.meter+=10
                                 }
                                
-                            }
-                            if(this.ball.state=='normal'){
-                                this.ball.dx*=-1
-                                player.meter+=10
                             
                                 if(this.get_collision(this.ball,player.upper_hitbox)){
                                     if(this.ball.dy>0){
@@ -241,6 +316,9 @@
                                 player.state='idle'
                                 this.ball.dx*=2
                                 player.meter+=10
+                                let aud= new Audio()
+                                aud.src = 'parry.wav'
+                                aud.play()
                                 this.state = 'freezeframe'
                                 this.freezetimer=20
 
@@ -251,6 +329,7 @@
                    
                    
                     if(this.ball.x<=0||this.ball.x>=canvas.width){
+                        this.ball.lasthit=null
                         if(this.ball.x<=0){
                             this.players[0].meter+=5
                             this.players[0].health-=10
@@ -286,14 +365,27 @@
                         if(this.ball.dy<-5){
                             this.ball.dy=-5
                         }
+                        this.state = 'freezeframe'
+                        this.freezetimer=30
                     }
                     if(this.ball.y<=0||this.ball.y>=canvas.height){
+                        ball_bounce.play()
                         this.ball.dy*=-1
                     }
                     this.render()
                     if(this.players[0].health<=0||this.players[1].health<=0){
-                        this.reset()
                         this.state='wait'
+                        if(this.players[0].health>0){
+                            document.getElementById('win-screen-msg').textContent=`${this.players[0].char.name} wins`
+                        }
+                         if(this.players[1].health>0){
+                            document.getElementById('win-screen-msg').textContent=`${this.players[1].char.name} wins`
+                        }
+                        this.reset()
+                        if(mode=='single'){
+                            main_char2=characters[Math.floor(Math.random()*characters.length)];
+                        }
+                        display_ui('win-screen')
                     }
                 }
                 if(this.state=='freezeframe'){
@@ -311,7 +403,6 @@
                 requestAnimationFrame(this.update.bind(this))
             }
         }
-        let game = new Game()
         
         document.addEventListener("keydown", event => {
             if(game.players[0].state=='idle'){

@@ -1,6 +1,7 @@
  class Player{
-    constructor(num){
+    constructor(num,char){
         this.num = num
+        this.char = char
         this.x = 0
         this.y = 0
         this.width=50
@@ -11,24 +12,37 @@
         this.lower_hitbox = new Hitbox(this.x,this.y+this.height/2,this.width,this.height/2)
         this.parry_counter = 0
         this.frame_counter = 0
+        this.stun_counter = 20
         this.dash_velocity = 0
         this.dash_direction = 0
         this.meter = 0
-        this.special_moves = []
+        this.special_moves = char.specials
         this.cpu_buffer=0
         this.health=100
         this.isultimate = false
-        this.ultimatemove
+        this.isSpecial = false
+        this.ultimatemove = char.ultimate
         this.direction=0
     }
     update(){
         if(this.meter>90){
             this.meter=90
         }
+        if(this.char.name=='bad guy'&&this.meter<70){
+            this.meter=70
+        }
         if(this.state=='parry'){
             this.parry_counter--
             if(this.parry_counter==0){
                 this.state='idle'
+            }
+            return
+        }
+        if(this.state=='stun'){
+            this.stun_counter--
+            if(this.stun_counter<=0){
+                this.state='idle'
+                this.stun_counter=20
             }
             return
         }
@@ -104,7 +118,8 @@
         
         // Offensive special move (index 1) - use when ball is in good position
         if (Math.random() < specialMoveChance * 0.2 && ball.x > screenCenter && !ballInDefensiveZone) {
-            this.special_moves[Math.floor(Math.random()*6)].onstart(this, opponent, game);
+            let move = generate(this.special_moves[Math.floor(Math.random()* this.special_moves.length)])
+            move.onstart(this, opponent, game);
             this.cpu_buffer = 15;
             return;
         }
@@ -168,12 +183,14 @@
     }
     get_image(){
         let image = new Image()
-        if(this.num==1){
-           image.src='player.png'
-        }else{
-            image.src='player2.png'
+        image.src = this.char.idle
+        if(this.state=='parry'){
+            image.src = this.char.parry
         }
-        return image;
+        if(this.isSpecial==true){
+            image.src = this.char.special
+        }
+        return {image:image,w:image.width,h:image.height};
     }
 }
 class Hitbox{
@@ -199,6 +216,7 @@ class Ball{
         this.dx = 0
         this.dy = 0
         this.state='normal'
+        this.lasthit=null
     }
     update(){
         this.x+=this.dx
