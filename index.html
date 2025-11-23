@@ -22,7 +22,7 @@
                <div><a href="https://www.youtube.com/@Samir_the_composer">MUSIC</a></div>
                <div><a href="books.html">BOOKS</a></div>
           </div>
-
+          
           <div class="frame column">
                <div class="grid3" style="background-image: url('assets/sfa2-stage-ken2.gif');background-repeat: no-repeat;background-position: center;background-size: cover;">
                     <div class="frame"><img src="assets/felicia90.gif" alt=""></div>
@@ -151,6 +151,17 @@
                <img src="assets/pro-lillith1.gif" alt="" width="128px">
          </div>
           <script src="pong.js"></script>
+          <script>
+               //https://backend.deviantart.com/oembed?url=https%3A%2F%2Fwww.deviantart.com%2Fteam%2Fart%2FFella-Celebrates-100k-971957229
+               fetch(`https://www.deviantart.com/guccistylus/art/lilith-1250987618`)
+               .then(response => response.json())
+               .then(data => {
+               console.log('Success:', data);
+               })
+               .catch(error => {
+               console.error('Error:', error);
+               })
+          </script>
      </body>
    
 

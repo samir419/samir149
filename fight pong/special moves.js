@@ -26,7 +26,7 @@ function play_voice(ent,num){
 }
 
 const projectile = {
-    x:0,y:0,w:30,h:30,dx:0,dy:0,state:'inactive',lifespan:0,color:'blue',owner:null,
+    x:0,y:0,w:30,h:30,dx:0,dy:0,state:'inactive',lifespan:0,color:'blue',owner:null,name:'projectile',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -79,7 +79,7 @@ const projectile = {
 }
 
 const echo = {
-    x:0,y:0,w:70,h:70,dx:0,dy:0,state:'inactive',lifespan:0,color:'green',owner:null,
+    x:0,y:0,w:70,h:70,dx:0,dy:0,state:'inactive',lifespan:0,color:'green',owner:null,name:'echo',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -119,7 +119,7 @@ const echo = {
 }
 
 const reflector = {
-    x:0,y:0,w:30,h:150,dx:0,dy:0,state:'inactive',lifespan:0,color:'orange',owner:null,
+    x:0,y:0,w:30,h:150,dx:0,dy:0,state:'inactive',lifespan:0,color:'orange',owner:null,name:'reflector',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -158,7 +158,7 @@ const reflector = {
 }
 
 const teleport = {
-    x:0,y:0,w:30,h:150,dx:0,dy:0,state:'inactive',lifespan:0,
+    x:0,y:0,w:30,h:150,dx:0,dy:0,state:'inactive',lifespan:0,name:'teleport',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -175,7 +175,7 @@ const teleport = {
 }
 
 const feint = {
-    x:0,y:0,w:25,h:25,dx:0,dy:0,state:'inactive',lifespan:0,color:'white',owner:null,
+    x:0,y:0,w:25,h:25,dx:0,dy:0,state:'inactive',lifespan:0,color:'white',owner:null,name:'feint',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -213,7 +213,7 @@ const feint = {
 }
 
 const direct_shot = {
-    x:0,y:0,w:25,h:25,dx:0,dy:0,state:'inactive',lifespan:0,color:'white',owner:null,
+    x:0,y:0,w:25,h:25,dx:0,dy:0,state:'inactive',lifespan:0,color:'white',owner:null,name:'direct shot',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -261,7 +261,7 @@ const direct_shot = {
     }
 }
 
-const shadowclones = {owner:null,
+const shadowclones = {owner:null,name:'shadow clones',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -331,7 +331,7 @@ const blackhole= {
     lifespan:0,
     owner:null,
     color:'purple',
-
+    name:'blackhole',
     onstart(user, target, game) {
         if (user.meter < 30) {
             console.log('not enough meter');
@@ -397,7 +397,7 @@ const magnetism= {
     lifespan:0,
     owner:null,
     color:'purple',
-
+    name:'magnetism',
     onstart(user, target, game) {
         if (user.meter < 30) {
             console.log('not enough meter');
@@ -466,7 +466,7 @@ const curve= {
     lifespan:0,
     owner:null,
     color:'orange',
-
+    name:'curve',
     onstart(user, target, game) {
         if (user.meter < 30) {
             console.log('not enough meter');
@@ -492,6 +492,12 @@ const curve= {
         this.x = this.owner.x
         this.y = this.owner.y
         game.ball.dy+=(this.owner.y-240)*0.01
+        if(game.ball.dy>6){
+            game.ball.dy=6
+        }
+         if(game.ball.dy<-6){
+            game.ball.dy=-6
+        }
         if(game.ball.y<=0||game.ball.y>=480){
             this.state='dead'
         }
@@ -502,7 +508,7 @@ const curve= {
 };
 
 const portal = {
-    x:0,y:0,w:30,h:90,dx:0,dy:0,state:'inactive',lifespan:0,color:'yellow',owner:null,
+    x:0,y:0,w:30,h:90,dx:0,dy:0,state:'inactive',lifespan:0,color:'yellow',owner:null,name:'portal',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -511,14 +517,15 @@ const portal = {
             return
         }
         if(user.num==1){
-            this.x = user.x+300
+            this.x = user.x+350
             this.y = user.y-50
         }else{
-            this.x = user.x-300
+            this.x = user.x-350
             this.y = user.y-50
         }
         this.owner=user
         this.owner.isSpecial=true
+        this.dy=4
         this.state='active'
         this.lifespan=400
         play_voice(user,1)
@@ -527,6 +534,11 @@ const portal = {
     },
     update:function(game){
         this.lifespan--
+        this.y+=this.dy
+        if(this.y<0||this.y>480-this.h){
+            this.dy*=-1
+            this.y+=this.dy
+        }
         if(this.lifespan<=220){
             this.owner.isSpecial=false
         }
@@ -541,7 +553,7 @@ const portal = {
     }
 }
 
-const happy_chaos = {owner:null,
+const happy_chaos = {owner:null,name:'happy chaos',
     onstart:function(user,target,game){
         if(user.meter>30){
             user.meter-=30
@@ -701,3 +713,4 @@ const great_wall = {
         }
     }
 }
+let moves = [projectile,echo,reflector,direct_shot,curve,magnetism,portal,shadowclones,happy_chaos,feint,teleport,blackhole]

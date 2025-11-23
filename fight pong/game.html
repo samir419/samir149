@@ -27,14 +27,14 @@
             max-width: 920;
              height: 100%;
             position: absolute; z-index: 90;
-            display: flex; 
+            display: none; 
             align-items: center; 
             justify-content: center;
         }
     </style>
 </head>
 <body>
-    <div style="display: flex;align-items: center;justify-content: center;width: 100%;flex-direction: column;">
+    <div style="display: flex;align-items: center;justify-content: center;width: 100%;flex-direction: column;" id="game-window">
         <div class="ui" id="select-mode">
            <div>
                 <h2>select mode</h2>
@@ -44,7 +44,18 @@
            </div>
         </div>
         <div class="ui" id="select-player">
-            <h2 id="select-player-msg">player 1 select</h2>
+            <div>
+                <h2 id="select-player-msg">player 1 select</h2>
+                <div id="player-list"></div>
+                <button onclick="display_ui('custom char');start_custom_creation()">custom char</button>
+            </div>
+        </div>
+        <div class="ui" id="custom char">
+            <div>
+                <h2 id="select-player-msg">custom char</h2>
+                <div id="custom-select"></div>
+            </div>
+            
         </div>
         <div class="ui" id="win-screen">
             <div>
@@ -76,7 +87,7 @@
             <div class="move" id="down">move down</div>
         </div>
     </div>
-   
+    <button onclick="document.getElementById('game-window').requestFullscreen()">fullscreen</button>
     <button onclick="game.state='running'">restart</button>
     <button onclick="music.pause()">pause</button>
     <script src="player.js"></script>
@@ -274,7 +285,7 @@
                     this.processes.forEach((process,index)=>{
                         process.update(this)
                         if(process.state=='dead'){
-                            this.processes.pop(index)
+                            this.processes.splice(index, 1);
                         }
                     })
                         
@@ -365,6 +376,10 @@
                         if(this.ball.dy<-5){
                             this.ball.dy=-5
                         }
+                        if(this.ball.dy==0){
+                            this.ball.dy=5
+                        }
+                        if(this.ball.dy==1)
                         this.state = 'freezeframe'
                         this.freezetimer=30
                     }
