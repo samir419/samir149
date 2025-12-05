@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blue Blood — Short Story</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ff6b6b;--muted:#98a0b3;--paper:#f8f6f3}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#071021 0%, #081226 60%, #0e1724 100%);color:var(--paper)}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:48px}
+    .card{width:min(900px,96%);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;box-shadow:0 10px 30px rgba(2,6,23,0.8);padding:36px;border:1px solid rgba(255,255,255,0.03)}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+    h1{margin:0;font-size:28px;letter-spacing:-0.5px}
+    .meta{color:var(--muted);font-size:13px}
+    article{line-height:1.7;color:#e6eef6}
+    p{margin:14px 0}
+    .controls{display:flex;gap:8px;align-items:center}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--paper);cursor:pointer;font-weight:600}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#ff8e72);border:none}
+    footer{margin-top:22px;color:var(--muted);font-size:13px}
+    @media (max-width:520px){h1{font-size:20px;padding-right:8px}.card{padding:20px}}
+    /* print-friendly */
+    @media print{body{background:white;color:black} .card{box-shadow:none;border:none;background:transparent} .controls{display:none}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div>
+          <h1>Blue Blood</h1>
+          <div class="meta">A short story — third person past tense</div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="downloadBtn">Download HTML</button>
+          <button class="btn primary" id="printBtn">Print / Save PDF</button>
+        </div>
+      </header>
+
+      <article id="story">
+<p>Massai darted through the crowded marketplace, his heart pounding as the scent of grilled chicken trailed behind him. He had dazzled the wealthy woman and her guards with a burst of spark balls—little flashes of light that drew startled gasps from bystanders. In that moment of distraction, he snatched the food intended for her pampered dog and disappeared into the chaos of the streets.</p>
+
+<p>The police shouted after him, but Massai knew these alleys better than anyone. He vaulted walls, slid under fences, and vanished into the maze of tin roofs and broken stairways. By the time he reached his usual hideout, he was grinning, proud of another victory for himself and his little sister, Njeri.</p>
+
+<p>But as he turned into the alley, that smile died. Tyrone and his gang stood waiting. Five taller, stronger boys stepped out, led by Tyrone’s sneer.</p>
+
+<p>“Nice catch, Massai,” Tyrone drawled.</p>
+
+<p>Massai tried to run, but they slammed him into the wall. They kicked him, punched him, and tore the food from his hands. When they finally left laughing, Massai lay bruised in the dirt.</p>
+
+<p>That night, the siblings huddled beneath cardboard scraps, shivering. Njeri’s stomach growled; Massai pretended not to hear it.</p>
+
+<p>A girl stepped from the shadows. She was about seventeen, sharp-eyed, carrying a thick piece of charred meat.</p>
+
+<p>“I saw what they did,” she said. “Eat.”</p>
+
+<p>Massai recoiled when she revealed where it came from—the rich woman’s dog. He shook his head in disgust.</p>
+
+<p>“You want to survive?” she asked coldly. “Your kindness is what makes you prey.”</p>
+
+<p>Massai looked at Njeri, curled up, clutching her hunger. His throat tightened. Trembling, he took the meat and shared it with her.</p>
+
+<hr>
+
+<p>By morning, Massai had made his decision. They would leave this city behind. The capital was dangerous, but maybe it held a chance.</p>
+
+<p>He led Njeri through side streets, but fate cornered him once again. Tyrone and his gang were prowling the road out. Massai lit his spark balls and hurled them—crescent sparks exploding into bright distraction. Tyrone barked orders, but overconfidence clouded him.</p>
+
+<p>Massai stuffed Njeri into a dumpster. “Stay hidden,” he whispered, then sprinted away.</p>
+
+<p>Tyrone chased him alone, rage twisting his features. His friends hesitated at the edge of a construction zone, shouting warnings, but Tyrone ignored them.</p>
+
+<p>Massai climbed scaffolding, breath ragged, sparks in hand. He tossed another cluster—Tyrone shielded his face too late. Light and heat burst directly against him; he stumbled, slipped, and dangled helplessly from the crane above.</p>
+
+<p>“Massai—help me!” Tyrone screamed, blinded and terrified.</p>
+
+<p>Massai stared at him. The memory of stolen food, bruises, and the girl’s voice echoed:</p>
+
+<p><em>Your kindness is what makes you weak.</em></p>
+
+<p>He turned away.</p>
+
+<p>Tyrone’s scream cut through the steel beams, then silence followed.</p>
+
+<hr>
+
+<p>Massai returned for Njeri. Hand in hand, they walked toward the horizon. His eyes carried a new fire—hard, cold, and determined.</p>
+
+<p>He would reach the capital, no matter what remained of his humanity.</p>
+      </article>
+
+      <footer>
+        Press <strong>Print / Save PDF</strong> to make a copy, or use <strong>Download HTML</strong> to save this page for later.
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'blue-blood-story.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
