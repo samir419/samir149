@@ -1,24 +1,5 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-     <div class="nav">
-        <div><a href="index.html">HOME</a></div>
-        <div><a href="https://www.deviantart.com/guccistylus">ART</a></div>
-        <div><a href="games.html">GAMES</a></div>
-        <div><a href="https://www.youtube.com/@Samir_the_composer">MUSIC</a></div>
-        <div><a href="books.html">BOOKS</a></div>
-    </div>
-    <h1>Pilot: The Apex Gauntlet</h1>
-    <p>
-       
 
-
-<p>The neon-lit arcology of Veridia was a vertical world, and its bloodstream was the Apex Gauntlet. A brutal, city-spanning parkour race, broadcast on every public screen. And tonight, in the rain-slicked finals, all eyes were on two runners.</p>
+The neon-lit arcology of Veridia was a vertical world, and its bloodstream was the Apex Gauntlet. A brutal, city-spanning parkour race, broadcast on every public screen. And tonight, in the rain-slicked finals, all eyes were on two runners.</p>
 Jessi “Zenith” Corvus moved with a liquid grace that made the impossible look instinctive. She was the tournament’s golden girl, her face plastered on every advertisement. As she launched from a crane arm, spinning through the air toward a distant rooftop, the crowd in the streets below roared. But their adoration felt like a weight. Every leap wasn't for glory; it was a step in a meticulously planned campaign. Winning the Gauntlet wasn't the goal. It was the credibility she needed to file a lawsuit against OmniCorp and claim her stolen birthright as the true heir to her father’s company.
 
 “Smooth line, Jessi,” a voice crackled in her ear. Chase. Her spotter, her strategist, her ghost.
@@ -74,7 +55,3 @@ She turned away from the prescribed route and toward a near-impossible gap, a le
 “Are mine to calculate,” she interrupted, a newfound fire in her eyes. For the first time, she wasn’t running for a legacy, or for a lawsuit, or for the people. She was running for herself.
 
 With Garou and Chase watching, one in awe, one with pride, Jessi Corvus took a breath, embraced the weight of her own choice, and leaped into the storm of drones, not as an heir, but as a rebel.
-
- </p>
-</body>
-</html>
