@@ -1,0 +1,290 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-image: url('assets/N.png');
+        }
+        #main{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: wrap;
+            border: solid;
+        }
+        #ui{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: solid blue;
+            width: 45%;
+        }
+        #log{
+            border: solid red;
+            color: white;
+            background-color: rgb(23, 23, 106);
+            overflow-y: scroll;
+            height: 70vh;
+            width: 100%;
+            max-width: 600px;
+           
+        }
+        player{
+            color: red;
+        }
+        player_blue{
+            color: blue;
+        }
+        move{
+            font-weight: bold;
+            font-size: 20px;
+        }
+        #moves1{
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(2, auto);
+            gap: 10px;
+            width: 100%;
+
+        }
+      
+        .move_img{
+            width: 80px;
+            height: 100px;
+        }
+        .health_bar{
+            width: 20px;
+            height: 30px;
+            display: inline-block;
+            background-color: rgb(236, 255, 89);
+            margin: 2px;
+        }
+        .player{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+           
+            border: solid red;
+        }
+        .player_data{display: flex; flex-direction: column;}
+        .info{background-color: rgb(149, 36, 16);color: white; padding: 5px; margin: 0;border: solid tomato;}
+        .move_btn{
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        #move-select>button{
+            width: 100px;
+            height: 100px;
+            margin: 2px;
+        }
+        @media (max-width: 800px) {
+            #main{
+                flex-direction: column;
+            }
+            #ui{
+                width: 100%;
+            }
+            .profile img{
+                width: 100px;
+                height: 100px;
+            }
+            #moves1{
+                grid-template-columns: repeat(3, 75px);
+            }
+             .move_img{
+                width: 60px;
+                height: 70px;
+            }
+            
+        }
+    </style>
+</head>
+<body>
+    <div id="move-select">
+        <h2>select moves</h2>
+    </div>
+    <div id="main">
+        <div id="ui">
+            <div class="player">
+                <div class="profile">
+                    <img src="assets/ZBATTLELOGO.png" alt="">
+                </div>
+                <div class="player_data">
+                    <div>
+                        <div style="background-color: tomato;">
+                            <div id="player2-data" class="info">name</div>
+                            <div id="player2-status" class="info">status</div>
+                        </div>
+                        <div id="player2-health">
+                           
+                        </div>
+                    </div>
+                    <div id="moves2"></div>
+                </div>
+            </div>
+            <div>A</div>
+             <div class="player">
+                <div class="profile">
+                    <img src="assets/ZBATTLELOGO.png" alt="">
+                </div>
+                <div class="player_data" id="player">
+                    <div>
+                        <div style="background-color: tomato;">
+                            <div id="player1-data" class="info">name</div>
+                            <div id="player1-status" class="info">status</div>
+                        </div>
+                        <div id="player1-health">
+                           
+                        </div>
+                        <div>
+                            <button onclick="cpu_state = 'inactive'; game.play(main_player,opponent,attack,'1'); handle_cpu()">attack</button>
+                            <button onclick="cpu_state = 'inactive'; game.play(main_player,opponent,defend,'1'); handle_cpu()">defend</button>
+                        </div>
+                        <div id="player-prompt"></div>
+                    </div>
+                    <div id="moves1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="log"></div>
+        <button onclick="restart()">restart</button>
+    </div>
+    <script src="moves.js"></script>
+    <script src="zbattle.js"></script>
+    <script>
+        const player1 = new player('player')
+        const player2 = new player('cpu')
+        let main_player 
+        let opponent 
+        cpu = true
+       
+        let rand = Math.random()
+        if(rand){
+            main_player = player1
+            opponent = player2
+        }else{
+            main_player = player2
+            opponent = player1
+        }
+        const game = new Game(main_player,opponent)
+        moves.forEach(move=>{
+            let button = document.createElement('button')
+            button.innerText = move.name
+            button.onclick = ()=>{
+                if(main_player.moves.length>=6){
+                    return;
+                }
+                main_player.add_move(move);
+                button.style.backgroundColor = 'lightgray';
+                button.disabled = true;
+            }
+            document.getElementById('move-select').appendChild(button)
+        })
+
+        let start_button = document.createElement('button')
+        start_button.innerText = 'start'
+        document.getElementById('move-select').appendChild(start_button)
+        start_button.onclick = ()=>{game_start()}
+
+        let quickstart = document.createElement('button')
+        quickstart.innerText = 'quick start'
+        quickstart.onclick = ()=>{
+            for(let i=0;i<6;i++){
+                let availableMoves = moves.filter(m => !main_player.moves.includes(m));
+                let randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+                main_player.add_move(randomMove);
+            }
+            game_start()
+        }
+        document.getElementById('move-select').appendChild(quickstart)
+       
+        function handle_cpu(){
+            setTimeout(() => {
+                if(game.state=='wait'){
+                    handle_cpu()
+                    return;
+                }
+                cpu_state = 'active'
+                let enabled_moves = opponent.moves.filter(m => m.isenabled);
+                let move = enabled_moves[Math.floor(Math.random()*enabled_moves.length)];
+                game.play(opponent,main_player,move,'2')
+            }, 1000);
+        }
+        function game_start(){
+            document.getElementById('move-select').style.display='none'
+            document.getElementById('log').innerHTML=''
+            for(let i=0;i<6;i++){
+                let availableMoves = moves.filter(m => !opponent.moves.includes(m));
+                let randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+                opponent.add_move(randomMove);
+            }
+            opponent.add_move(attack)
+            opponent.add_move(defend)
+            document.getElementById('moves1').innerHTML=''
+            main_player.moves.forEach(move => {
+                let btn = document.createElement('div')
+                btn.className = 'move_btn'
+                let image = document.createElement('img')
+                image.className = 'move_img'
+                image.src = `assets/moves/${move.img}`
+                btn.appendChild(image)
+                btn.innerHTML += `<div>${move.name}</div>`
+                btn.onclick = ()=>{
+                    if(game.state=='wait'){
+                        log('select an option')
+                        return;
+                    }
+                    cpu_state = 'inactive'
+                    game.play(main_player,opponent,move,'1');
+                    if(opponent.health>0){
+                        handle_cpu()
+                    }
+                }
+                move.elem =btn
+                document.getElementById('moves1').appendChild(btn)
+                
+            });
+          
+            game.start()
+            handle_cpu()
+        }
+        function restart(){
+            document.getElementById('move-select').style.display='block'
+             document.getElementById('move-select').innerHTML=''
+              moves.forEach(move=>{
+                let button = document.createElement('button')
+                button.innerText = move.name
+                button.onclick = ()=>{
+                    if(main_player.moves.length>=6){
+                        return;
+                    }
+                    main_player.add_move(move);
+                    button.style.backgroundColor = 'lightgray';
+                    button.disabled = true;
+                }
+                document.getElementById('move-select').appendChild(button)
+            })
+             document.getElementById('move-select').appendChild(start_button)
+              document.getElementById('move-select').appendChild(quickstart)
+            main_player.health = 1500
+            opponent.health = 1500
+            main_player.moves = []
+            opponent.moves = []
+            main_player.status_effects = []
+            opponent.status_effects = []
+           
+        }
+       
+    </script>
+</body>
+</html>
